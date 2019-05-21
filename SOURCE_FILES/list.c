@@ -24,24 +24,14 @@ static Node* createListNode(const Data data)
 
 List createEmptyList(void)
 {
-    List list = (List) malloc(sizeof(List));
-    if(list == NULL){
-        return NULL;
-    }
-    else{
-        list->next = NULL;
-        list->previous = NULL;
-        return list; // Ersatt med ratt returvarde
-    }
+    return NULL; // Ersatt med ratt returvarde
 }
 
 
 int isEmptyList(const List list)
 {
-    if(list->next == NULL){
-        return 1;
-    }
-    else return 0; //ersatt med ratt returvarde
+    if(list == NULL) return 1;
+    return 0;
 }
 
 
@@ -49,58 +39,63 @@ void addFirst(List *list, const Data data)
 {
     // Anropa createListNode for att skapa den nya noden
     // Om createListNode kan returnera NULL maste detta fall tas hand om
-    Node* head = *list;
     Node* newNode = createListNode(data);
     if(newNode == NULL){
+        printf("Allocation error\n");
         return;
     }
-    newNode->previous = head;
-    if(!isEmptyList(*list)){
-        head->next->previous = newNode;
-    }
-    newNode->next = head->next;
-    head->next = newNode;
+    newNode->next = *list;
+    if(newNode->next != NULL)
+        newNode->next->previous = newNode;
+    *list = newNode;
    /* Postcondition: Det nya datat ligger forst i listan (testa med assert, anvand funktionen getFirstElement()) */
+   assert(getFirstElement(*list) == data);
 }
 
 void addLast(List *list, const Data data)
 {
-    Node* last = *list;
-    while(last->next != NULL){
-        last = last->next;
-    }
     Node* newNode = createListNode(data);
-    if(newNode == NULL){
+    if(isEmptyList(*list)){
+        addFirst(list, data);
         return;
     }
-    last->next = newNode;
-    newNode->previous = last;
+    Node* lastNode;
+    for(lastNode = *list; lastNode->next != NULL; lastNode = lastNode->next);
+    lastNode->next = newNode;
+    newNode->previous = lastNode;
+    assert(getLastElement(*list) == data);
   /* Postcondition: Det nya datat ligger forst i listan (testa med assert, anvand funktionen getLastElement()) */
 }
 
 void removeFirst(List *list)
 {
+    assert(!isEmptyList(*list));
 	/* Precondition: listan ar inte tom (testa med assert) */
-    Node* head = *list;
-    Node* nodeToRemove = head->next;
-    head->next = nodeToRemove->next;
-    if(nodeToRemove->next != NULL){
-        nodeToRemove->next->previous = head;
-    }
+    Node* nodeToRemove = *list;
+    *list = nodeToRemove->next;
+    if(nodeToRemove->next != NULL)
+        nodeToRemove->next->previous = NULL;
     free(nodeToRemove);
+    nodeToRemove = NULL;
+
 	//Glom inte att frigora minnet for den nod som lankas ur listan.
 }
 
 void removeLast(List *list)
 {
 	/* Precondition: listan ar inte tom (testa med assert) */
-    Node* head = *list;
-    Node* nodeToRemove = head;
-    while(nodeToRemove->next != NULL){
-        nodeToRemove = nodeToRemove->next;
+    assert(!isEmptyList(*list));
+    if(numberOfNodesInList(*list) == 1){
+        removeFirst(list);
+        return;
     }
-    nodeToRemove->previous->next = NULL;
-    free(nodeToRemove);
+    Node* lastNode;
+    for(lastNode = *list; lastNode->next != NULL; lastNode = lastNode->next);
+    if(lastNode->previous != NULL)
+        lastNode->previous->next = NULL;
+    free(lastNode);
+    lastNode = NULL;
+
     //Glom inte att frigora minnet for den nod som lankas ur listan.
 }
 
@@ -108,46 +103,48 @@ int removeElement(List *list, const Data data)
 {
 	/* Precondition: listan ar inte tom (testa med assert) */
     if(isEmptyList(*list)) return 0;
-    Node* head = *list;
-    Node* nodeToRemove = head;
-    while(nodeToRemove->data.key != data.key){
-        if(nodeToRemove->next == NULL){
-            return 0;
-        }
-        nodeToRemove = nodeToRemove->next;
+    Node* nodeToRemove;
+    if(data == getFirstElement(*list)){
+        removeFirst(list);
+        return 1;
     }
-    if(nodeToRemove->next != NULL){
-        nodeToRemove->previous->next = nodeToRemove->next;
+    else if(data == getLastElement(*list)){
+        removeLast(list);
+        return 1;
     }
-    else{
-        nodeToRemove->previous->next = NULL;
-    }
-    if(nodeToRemove->next != NULL){
+    for(nodeToRemove = *list; nodeToRemove->next != NULL && nodeToRemove->data != data; nodeToRemove = nodeToRemove->next);
+    if(nodeToRemove->data != data)
+        return 0;
+
+    if(nodeToRemove->next != NULL)
         nodeToRemove->next->previous = nodeToRemove->previous;
-    }
+
+    if(nodeToRemove->previous != NULL)
+        nodeToRemove->previous->next = nodeToRemove->next;
 
     free(nodeToRemove);
+    nodeToRemove = NULL;
     return 1; //Ersatt med ratt returvarde
 }
 
 int searchList(const List list, const Data data)
 {
-    Node* head = list;
-    Node* searchNode = head;
-    while(searchNode->data.key != data.key){
-        if(searchNode->next == NULL) return 0;
-        searchNode = searchNode->next;
-    }
-    return 1; //Ersatt med ratt returvarde
+    if(isEmptyList(list)) return 0;
+    Node* searchNode;
+    for(searchNode = list; searchNode->next != NULL && searchNode->data != data; searchNode = searchNode->next);
+    if(searchNode->data == data)
+        return 1; //Ersatt med ratt returvarde
+    return 0;
 }
 
 int numberOfNodesInList(const List list)
 {
+    if(isEmptyList(list)) return 0;
     Node* node = list;
     int counter = 0;
-    while(node->next != NULL){
-        node = node->next;
+    while(node != NULL){
         counter++;
+        node = node->next;
     }
     return counter; //Ersatt med ratt returvarde
 }
@@ -155,23 +152,9 @@ int numberOfNodesInList(const List list)
 void clearList(List *list)
 {
     //Alla noder maste avallokeras en och en, det racker inte att endast frigora list!
-    Node* head = *list;
-    while(head->next != NULL) removeLast(list);
-    assert(head->next == NULL);
+    while(*list != NULL) removeLast(list);
+    assert(isEmptyList(*list));
 	/* Postcondition: Listan ar tom (testa med assert) */
-}
-
-/*Skriv ut listan
-  Vid anropet kan man ange stdout som argument 2 for att skriva ut p� skarmen.
-  Anvanda fprintf for att skriva ut.
-  Den har typen av utskriftfunktion blir mer generell da man kan valja att skriva ut till skarmen eller till fil.*/
-void printList(const List list, FILE *textfile)
-{
-    Node * firstNode = list->next;
-    while(firstNode != NULL){
-        fprintf(textfile, "\n%d", firstNode->data);
-        firstNode = firstNode->next;
-    }
 }
 
 
@@ -179,18 +162,24 @@ Data getFirstElement(const List list)
 {
     /* Precondition: listan ar inte tom (testa med assert) */
     assert(!isEmptyList(list));
-    return list->next->data; //Ersatt med ratt returvarde
+    return list->data; //Ersatt med ratt returvarde
 }
 
+void printList(const List list, FILE *textfile)
+{
+    Node* firstNode = list;
+    while(firstNode != NULL){
+        fprintf(textfile, "\n%d", firstNode->data);
+        firstNode = firstNode->next;
+    }
+    printf("\n");
+}
 
 Data getLastElement(const List list)
 {
 	/*  Precondition: listan ar inte tom (testa med assert) */
     assert(!isEmptyList(list));
-    Node* head = list;
-    Node* lastNode = head;
-    while(lastNode->next != NULL){
-        lastNode = lastNode->next;
-    }
+    Node* lastNode;
+    for(lastNode = list; lastNode->next != NULL; lastNode = lastNode->next);
     return lastNode->data; //Ersatt med ratt returvarde
 }
