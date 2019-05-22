@@ -4,18 +4,19 @@
 #include "Array.h"
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 int isImplemented(SortingAlgorithm algorithm)
 {
-	/* Avkommentera raderna på sorteringsalgoritmerna som ni har implementerat nedan */
+	/* Avkommentera raderna pï¿½ sorteringsalgoritmerna som ni har implementerat nedan */
 
 	switch (algorithm)
 	{
-//	case BUBBLE_SORT:
-//	case INSERTION_SORT:
+	case BUBBLE_SORT:
+	case INSERTION_SORT:
 //	case SELECTION_SORT:
 //	case QUICK_SORT:
-//	case MERGE_SORT:
+	case MERGE_SORT:
 		return 1;
 	default:
 		return 0;
@@ -23,17 +24,37 @@ int isImplemented(SortingAlgorithm algorithm)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Era algoritmer här:
+// Era algoritmer hï¿½r:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void bubbleSort(ElementType* arrayToSort, size_t size, Statistics* statistics)
 {
-
-	assert(isSorted(arrayToSort, size)); // Post-condition
+	int n = size;
+	while(greaterThan(n, 1, statistics)){
+		int newn = 0;
+		for(int i = 1; lessThan(i, n, statistics); i++){
+			if(greaterThan(arrayToSort[i-1], arrayToSort[i], statistics)){
+				swapElements(&arrayToSort[i-1], &arrayToSort[i], statistics);
+				newn = i;
+			}
+		}
+		n = newn;
+	}
 }
 
 static void insertionSort(ElementType* arrayToSort, size_t size, Statistics* statistics)
 {
+	int i = 1;
+	while(lessThan(i, size, statistics)){
+		int x = arrayToSort[i];
+		int j = i - 1;
+		while(greaterThanOrEqualTo(j, 0, statistics) && greaterThan(arrayToSort[j], x, statistics)){
+			arrayToSort[j+1] = arrayToSort[j];
+			j--;
+		}
+		arrayToSort[j+1] = x;
+		i++;
+	}
 
 	assert(isSorted(arrayToSort, size)); // Post-condition
 }
@@ -44,9 +65,40 @@ static void selectionSort(ElementType* arrayToSort, size_t size, Statistics* sta
 	assert(isSorted(arrayToSort, size)); // Post-condition
 }
 
+static void topDownMerge(ElementType* a, int start, int middle, int end, ElementType* b, Statistics* statistics){
+	int i = start, j = middle;
+	for(int k = start; lessThan(k, end, statistics); k++){
+		if(lessThan(i, middle, statistics) && (greaterThanOrEqualTo(j, end, statistics) || lessThanOrEqualTo(a[i], a[j], statistics))){
+			b[k] = a[i];
+			i++;
+		}
+		else{
+			b[k] = a[j];
+			j++;
+		}
+	}
+}
+
+static void topDownSplitMerge(ElementType* b, int start, int end, ElementType* a, Statistics* statistics){
+	if(lessThan(end - start, 2, statistics)) return;
+	int middle = (start + end)/2;
+	topDownSplitMerge(a, start, middle, b, statistics);
+	topDownSplitMerge(a, middle, end, b, statistics);
+
+	topDownMerge(b, start, middle, end, a, statistics);
+}
+
+static void copyArray(ElementType* a, int start, int end, ElementType* b, Statistics* statistics){
+	for(int i = start; lessThan(i, end, statistics);i++)
+		b[i] = a[i];
+}
+
 static void mergeSort(ElementType* arrayToSort, size_t size, Statistics* statistics)
 {
-
+	ElementType* arrayCopy = (ElementType*) malloc(sizeof(ElementType) * size);
+	assert(arrayCopy != NULL);
+	copyArray(arrayToSort, 0, size, arrayCopy, statistics);
+	topDownSplitMerge(arrayCopy, 0, size, arrayToSort, statistics);
 	assert(isSorted(arrayToSort, size)); // Post-condition
 }
 
@@ -61,22 +113,22 @@ static void quickSort(ElementType* arrayToSort, size_t size, Statistics* statist
 
 char* getAlgorithmName(SortingAlgorithm algorithm)
 {
-	/* Är inte strängen vi allokerar lokal för funktionen? 
-	   Nej, inte i detta fall. Strängkonstanter är ett speciallfall i C */
+	/* ï¿½r inte strï¿½ngen vi allokerar lokal fï¿½r funktionen?
+	   Nej, inte i detta fall. Strï¿½ngkonstanter ï¿½r ett speciallfall i C */
 	switch (algorithm)
 	{
-	case BUBBLE_SORT:	 return "  Bubble sort "; 
+	case BUBBLE_SORT:	 return "  Bubble sort ";
 	case SELECTION_SORT: return "Selection sort";
 	case INSERTION_SORT: return "Insertion sort";
 	case MERGE_SORT:	 return "  Merge sort  ";
-	case QUICK_SORT:	 return "  Quick sort  "; 
+	case QUICK_SORT:	 return "  Quick sort  ";
 	default:
 		assert(0 && "Ogiltig algoritm!");
 		return "";
 	}
 }
 
-// Sorterar 'arrayToSort' med 'algorithmToUse'. Statistik för antal byten och jämförelser hamnar i *statistics
+// Sorterar 'arrayToSort' med 'algorithmToUse'. Statistik fï¿½r antal byten och jï¿½mfï¿½relser hamnar i *statistics
 static void sortArray(ElementType* arrayToSort, size_t size, SortingAlgorithm algorithmToUse, Statistics* statistics)
 {
 	if(statistics != NULL)
@@ -94,7 +146,7 @@ static void sortArray(ElementType* arrayToSort, size_t size, SortingAlgorithm al
 	}
 }
 
-// Förbereder arrayer för sortering genom att allokera minne för dem, samt intialisera dem 
+// Fï¿½rbereder arrayer fï¿½r sortering genom att allokera minne fï¿½r dem, samt intialisera dem
 static void prepareArrays(SortingArray sortingArray[], SortingAlgorithm algorithm, const ElementType* arrays[], const unsigned int sizes[])
 {
 	assert(isImplemented(algorithm));
@@ -122,7 +174,7 @@ static void sortArrays(SortingArray toBeSorted[])
 	{
 		SortingArray* current = &toBeSorted[i];
 		sortArray(current->arrayToSort, current->arraySize, current->algorithm, &current->statistics);
-	
+
 		if (!isSorted(current->arrayToSort, current->arraySize))
 		{
 			printf("Error! The algoritm %s is not sorting correctly!\n", getAlgorithmName(current->algorithm));
@@ -150,7 +202,7 @@ void printResult(SortingArray sortedArrays[], FILE* file)
 void sortAndPrint(SortingArray sortingArray[], SortingAlgorithm algorithm, const ElementType* arrays[], unsigned int sizes[], FILE* file)
 {
 	assert(file != NULL);
-	
+
 	prepareArrays(sortingArray, algorithm, arrays, sizes);
 	sortArrays(sortingArray);
 	printResult(sortingArray, file);
