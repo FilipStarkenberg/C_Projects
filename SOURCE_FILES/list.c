@@ -49,7 +49,7 @@ void addFirst(List *list, const Data data)
         newNode->next->previous = newNode;
     *list = newNode;
    /* Postcondition: Det nya datat ligger forst i listan (testa med assert, anvand funktionen getFirstElement()) */
-   assert(getFirstElement(*list) == data);
+   assert(getFirstElement(*list).key == data.key);
 }
 
 void addLast(List *list, const Data data)
@@ -63,7 +63,7 @@ void addLast(List *list, const Data data)
     for(lastNode = *list; lastNode->next != NULL; lastNode = lastNode->next);
     lastNode->next = newNode;
     newNode->previous = lastNode;
-    assert(getLastElement(*list) == data);
+    assert(getLastElement(*list).key == data.key);
   /* Postcondition: Det nya datat ligger forst i listan (testa med assert, anvand funktionen getLastElement()) */
 }
 
@@ -104,16 +104,16 @@ int removeElement(List *list, const Data data)
 	/* Precondition: listan ar inte tom (testa med assert) */
     if(isEmptyList(*list)) return 0;
     Node* nodeToRemove;
-    if(data == getFirstElement(*list)){
+    if(data.key == getFirstElement(*list).key){
         removeFirst(list);
         return 1;
     }
-    else if(data == getLastElement(*list)){
+    else if(data.key == getLastElement(*list).key){
         removeLast(list);
         return 1;
     }
-    for(nodeToRemove = *list; nodeToRemove->next != NULL && nodeToRemove->data != data; nodeToRemove = nodeToRemove->next);
-    if(nodeToRemove->data != data)
+    for(nodeToRemove = *list; nodeToRemove->next != NULL && nodeToRemove->data.key != data.key; nodeToRemove = nodeToRemove->next);
+    if(nodeToRemove->data.key != data.key)
         return 0;
 
     if(nodeToRemove->next != NULL)
@@ -131,8 +131,8 @@ int searchList(const List list, const Data data)
 {
     if(isEmptyList(list)) return 0;
     Node* searchNode;
-    for(searchNode = list; searchNode->next != NULL && searchNode->data != data; searchNode = searchNode->next);
-    if(searchNode->data == data)
+    for(searchNode = list; searchNode->next != NULL && searchNode->data.key != data.key; searchNode = searchNode->next);
+    if(searchNode->data.key == data.key)
         return 1; //Ersatt med ratt returvarde
     return 0;
 }

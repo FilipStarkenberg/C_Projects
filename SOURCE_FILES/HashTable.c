@@ -23,9 +23,7 @@ static Data createBucket(Key key, Value value){
 HashTable createHashTable(unsigned int size)
 {
 	HashTable htable;
-	printf("Setting size %d\n", size);
 	htable.size = size;
-	printf("allocating mem\n");
 	htable.table = (List*) malloc(sizeof(List) * size);
 	for(unsigned int i = 0; i < htable.size; i++){
 		htable.table[i] = createEmptyList();
@@ -39,9 +37,7 @@ int insertElement(HashTable* htable, const Key key, const Value value)
 	unsigned int thash = hash(key, htable->size);
 	assert(thash < htable->size);
 	Data newBucket = createBucket(key, value);
-	printf("Insering key %d in %d\n", key, thash);
 	addLast(&htable->table[thash], newBucket);
-	printf("Key %d Inserted in %d\n", key, thash);
 	//printf("Test\n");
 	return numberOfNodesInList(htable->table[thash]) -1;
 	/*if(isEmptyList(htable->table[thash])){
@@ -66,7 +62,6 @@ void deleteElement(HashTable* htable, const Key key)
 const Value* lookup(const HashTable* htable, const Key key)
 {
 	if(isEmptyList(htable->table[hash(key, htable->size)])){
-		printf("Lookup: List is empty\n");
 		return NULL;
 	}
 	else{ //if(searchList(htable->table[hash(key, htable->size)], createBucket(key, getRandomPerson()))){
@@ -105,6 +100,7 @@ void printHashTable(const HashTable* htable)
 
 float getLoadFactor(const HashTable* htable)
 {
+	if(htable->size == 0) return 0.0;
 	int counter = 0;
 	for(int i = 0; i < htable->size; i++){
 		if(!isEmptyList(htable->table[i])) counter++;
