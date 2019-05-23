@@ -23,7 +23,7 @@ static int compare( const void* a, const void* b)
 // Skapar en tr�dnod med det givna datat samt allokerar minne f�r det
 static struct treeNode* createNode(int data)
 {
-	BSTree tree = (BSTree)malloc(sizeof(BSTree));
+	BSTree tree = (BSTree)malloc(sizeof(struct treeNode));
 	tree->data = data;
 	tree->left = NULL;
 	tree->right = NULL;
