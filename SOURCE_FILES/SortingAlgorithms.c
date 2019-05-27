@@ -15,7 +15,7 @@ int isImplemented(SortingAlgorithm algorithm)
 	case BUBBLE_SORT:
 	case INSERTION_SORT:
 //	case SELECTION_SORT:
-//	case QUICK_SORT:
+	case QUICK_SORT:
 	case MERGE_SORT:
 		return 1;
 	default:
@@ -102,9 +102,38 @@ static void mergeSort(ElementType* arrayToSort, size_t size, Statistics* statist
 	assert(isSorted(arrayToSort, size)); // Post-condition
 }
 
+static int partition(ElementType* array, int low, int high, Statistics* statistics){
+	int pivot = array[low + (high - low)/2];
+	int i = low - 1;
+	int j = high + 1;
+	while(1){
+		do{
+			i++;
+		}while(lessThan(array[i], pivot, statistics));
+
+		do{
+			j--;
+		}while(greaterThan(array[j], pivot, statistics));
+
+		if(greaterThanOrEqualTo(i, j, statistics))
+			return j;
+
+		swapElements(&array[i], &array[j], statistics);
+	}
+}
+
+static void qSort(ElementType* array, int low, int high, Statistics* statistics){
+	if(lessThan(low, high, statistics)){
+		int p = partition(array, low, high, statistics);
+		qSort(array, low, p, statistics);
+		qSort(array, p + 1, high, statistics);
+	}
+
+}
+
 static void quickSort(ElementType* arrayToSort, size_t size, Statistics* statistics)
 {
-
+	qSort(arrayToSort, 0, size-1, statistics);
 	assert(isSorted(arrayToSort, size)); // Post-condition
 }
 
