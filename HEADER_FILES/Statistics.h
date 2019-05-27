@@ -3,13 +3,13 @@
 #include <stdio.h>
 
 /********************************************************
-   
+
    DVA104, Lab 5, Statistics.h
-   Innehåller funktioner för att hålla reda på 
-   statistik över hur många byten och jämförelser man gör 
+   Innehï¿½ller funktioner fï¿½r att hï¿½lla reda pï¿½
+   statistik ï¿½ver hur mï¿½nga byten och jï¿½mfï¿½relser man gï¿½r
    i sorteringsalgoritmer.
 
-   Stefan Bygde VT2016 
+   Stefan Bygde VT2016
 
 *********************************************************/
 
@@ -21,20 +21,20 @@ struct statistics
 
 typedef struct statistics Statistics;
 
-// Nollställer statistiken
+// Nollstï¿½ller statistiken
 void resetStatistics(Statistics* statistics);
 
 // Skriver statistiken till fil
 void printStatistics(const Statistics* statistics, FILE* file);
 
-// Jämförelseoperatorer med statistik
-int lessThan(unsigned int element1, unsigned int element2, Statistics* statistics); // sant om element1 < element2
-int greaterThan(unsigned int element1, unsigned int element2, Statistics* statistics); // sant om element1 > element2
-int equalTo(unsigned int element1, unsigned int element2, Statistics* statistics); // sant om element1 == element2
-int lessThanOrEqualTo(unsigned int element1, unsigned int element2, Statistics* statistics); // sant om element1 <= element2
-int greaterThanOrEqualTo(unsigned int element1, unsigned int element2, Statistics* statistics); // sant om element >= element2
+// Jï¿½mfï¿½relseoperatorer med statistik
+int lessThan(int element1, int element2, Statistics* statistics); // sant om element1 < element2
+int greaterThan(int element1, int element2, Statistics* statistics); // sant om element1 > element2
+int equalTo(int element1, int element2, Statistics* statistics); // sant om element1 == element2
+int lessThanOrEqualTo(int element1, int element2, Statistics* statistics); // sant om element1 <= element2
+int greaterThanOrEqualTo(int element1, int element2, Statistics* statistics); // sant om element >= element2
 
-// Byter plats på element1 och element2 med statistik
+// Byter plats pï¿½ element1 och element2 med statistik
 void swapElements(unsigned int* element1, unsigned int* element2, Statistics* statistics);
 
 #endif

@@ -1,5 +1,5 @@
 #include "Array.h"
-#include "Statistics.h" 
+#include "Statistics.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -12,7 +12,7 @@ int isSorted(const ElementType* array, size_t size)
 	unsigned int i;
 
 	for (i = 1; i < size; i++)
-		if (array[i] < array[i - 1])	// Om två element är i fel ordning är elementen ej sorterade
+		if (array[i] < array[i - 1])	// Om tvï¿½ element ï¿½r i fel ordning ï¿½r elementen ej sorterade
 			return 0;
 	return 1;
 }
@@ -49,18 +49,18 @@ ElementType* createBackwardSortedArray(size_t size)
 
 ElementType* createUnsortedArray(size_t size)
 {
-	srand(SEED); // Se till att varje osorterad array är lika
+	srand(SEED); // Se till att varje osorterad array ï¿½r lika
 
-	ElementType* array = createForwardSortedArray(size); // Börja med en sorterad array
+	ElementType* array = createForwardSortedArray(size); // Bï¿½rja med en sorterad array
 	unsigned int randomIndex1, randomIndex2;
 	unsigned int i;
 
 	if (array != NULL)
 	{
-		// Byt plats på element slumpmässigt
+		// Byt plats pï¿½ element slumpmï¿½ssigt
 		for (i = 0; i < size; i++)
 		{
-			// Välj två slumpmässiga index och byt plats på dem
+			// Vï¿½lj tvï¿½ slumpmï¿½ssiga index och byt plats pï¿½ dem
 			randomIndex1 = rand() % size;
 			randomIndex2 = rand() % size;
 			swapElements(&array[randomIndex1], &array[randomIndex2], NULL);

@@ -21,35 +21,35 @@ void printStatistics(const Statistics* statistics, FILE* file)
 }
 
 
-int lessThan(unsigned int element1, unsigned int element2, Statistics* statistics)
+int lessThan(int element1, int element2, Statistics* statistics)
 {
 	assert(statistics != NULL);
 	statistics->comparisons++;
 	return element1 < element2;
 }
 
-int greaterThan(unsigned int element1, unsigned int element2, Statistics* statistics)
+int greaterThan(int element1, int element2, Statistics* statistics)
 {
 	assert(statistics != NULL);
 	statistics->comparisons++;
 	return element1 > element2;
 }
 
-int equalTo(unsigned int element1, unsigned int element2, Statistics* statistics)
+int equalTo(int element1, int element2, Statistics* statistics)
 {
 	assert(statistics != NULL);
 	statistics->comparisons++;
 	return element1 == element2;
 }
 
-int lessThanOrEqualTo(unsigned int element1, unsigned int element2, Statistics* statistics)
+int lessThanOrEqualTo(int element1, int element2, Statistics* statistics)
 {
 	assert(statistics != NULL);
 	statistics->comparisons++;
 	return element1 <= element2;
 }
 
-int greaterThanOrEqualTo(unsigned int element1, unsigned int element2, Statistics* statistics)
+int greaterThanOrEqualTo(int element1, int element2, Statistics* statistics)
 {
 	assert(statistics != NULL);
 	statistics->comparisons++;
