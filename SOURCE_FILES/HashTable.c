@@ -95,6 +95,17 @@ void freeHashTable(HashTable* htable)
 void printHashTable(const HashTable* htable)
 {
 	// Ni kan anv�nda printPerson() fr�n person.h f�r att skriva ut en person
+	if(htable != NULL){
+		for(int i = 0; i < htable->size; i++){
+			if(htable->table[i] != NULL){
+				List list;
+				for(list = htable->table[i]; list->next != NULL; list = list->next){
+					printPerson(&list->data.value);
+					printf("\n");
+				}
+			}
+		}
+	}
 }
 
 

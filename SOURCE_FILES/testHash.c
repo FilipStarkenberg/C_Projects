@@ -322,6 +322,7 @@ void runTests(unsigned int tableSize, unsigned int dataSize)
 	for (i = 0; i < dataSize / 5; i++)
 		addRandomPersonToTable(&htable);
 
+	printHashTable(&htable);
 	printf("Freeing hash table\n");
 	freeHashTable(&htable);
 	assert(getSize(&htable) == 0);
